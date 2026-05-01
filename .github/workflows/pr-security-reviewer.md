@@ -1,10 +1,17 @@
 ---
 on:
-  pull_request:
-    types: [labeled]
-    forks: ["*"]
-  status-comment: true
-if: github.event.label.name == 'review:security' || github.event.label.name == 'review:all'
+  workflow_dispatch:
+    inputs:
+      pr_url:
+        description: "Full URL of the PR to review (e.g. https://github.com/drasi-project/drasi-core/pull/42)"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      pr_url:
+        description: "Full URL of the PR to review"
+        required: true
+        type: string
 permissions:
   contents: read
   pull-requests: read
@@ -27,7 +34,7 @@ You are pr-security-reviewer, a security-focused code review agent for the Drasi
 
 ## Trigger context
 
-You are triggered when the `review:security` or `review:all` label is applied to PR #${{ github.event.pull_request.number }} in repository ${{ github.repository }}.
+You are triggered via workflow_dispatch with a PR URL input: "${{ inputs.pr_url }}". Fetch and review the PR at that URL.
 
 ## Pre-review setup
 
