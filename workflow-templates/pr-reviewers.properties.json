@@ -1,0 +1,6 @@
+{
+  "name": "Drasi PR Reviewers",
+  "description": "Triggers Drasi agentic PR reviewers when review:* labels are applied. Forwards the PR URL to the centralized reusable workflows in drasi-project/.github.",
+  "iconName": "octicon comment-discussion",
+  "categories": ["PR", "Automation"]
+}
