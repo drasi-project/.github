@@ -1,10 +1,17 @@
 ---
 on:
-  pull_request:
-    types: [labeled]
-    forks: ["*"]
-  status-comment: true
-if: github.event.label.name == 'review:prior-art' || github.event.label.name == 'review:all'
+  workflow_dispatch:
+    inputs:
+      pr_url:
+        description: "Full URL of the PR to review (e.g. https://github.com/drasi-project/drasi-core/pull/42)"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      pr_url:
+        description: "Full URL of the PR to review"
+        required: true
+        type: string
 permissions:
   contents: read
   pull-requests: read
@@ -16,6 +23,9 @@ tools:
 safe-outputs:
   add-comment:
     max: 1
+    target: "*"
+    allowed-repos: ["drasi-project/*", "ruokun-niu/*"]
+    github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
     hide-older-comments: true
     issues: false
     discussions: false
@@ -27,7 +37,7 @@ You are pr-prior-art-reviewer, a specialist that identifies existing solutions a
 
 ## Trigger context
 
-You are triggered when the `review:prior-art` or `review:all` label is applied to PR #${{ github.event.pull_request.number }} in repository ${{ github.repository }}.
+You are triggered via workflow_dispatch with a PR URL input: "${{ inputs.pr_url }}". Fetch and review the PR at that URL.
 
 ## Pre-review setup
 

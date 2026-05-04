@@ -1,0 +1,6 @@
+{
+  "name": "Drasi PR Reviewers (workflow_dispatch)",
+  "description": "Triggers Drasi agentic PR reviewers by API-dispatching workflows in drasi-project/.github. Required when calling from outside the drasi-project org or when handling fork PRs. Requires DISPATCH_TOKEN secret.",
+  "iconName": "octicon comment-discussion",
+  "categories": ["PR", "Automation"]
+}

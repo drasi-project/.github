@@ -1,0 +1,6 @@
+{
+  "name": "Drasi PR Reviewers (workflow_call)",
+  "description": "Triggers Drasi agentic PR reviewers via reusable workflow (workflow_call). Best for repos inside the drasi-project org. For external/fork PRs or repos outside the org, use the workflow_dispatch variant.",
+  "iconName": "octicon comment-discussion",
+  "categories": ["PR", "Automation"]
+}
