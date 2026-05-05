@@ -29,11 +29,7 @@ safe-outputs:
     max: 10
     side: "RIGHT"
     target: "*"
-    allowed-repos:
-      - drasi-project/drasi-core
-      - drasi-project/drasi-server
-      - drasi-project/drasi-platform
-      - drasi-project/docs
+    target-repo: "drasi-project/drasi-core"
     github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
   submit-pull-request-review:
     max: 1
