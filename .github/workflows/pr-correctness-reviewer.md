@@ -25,14 +25,19 @@ tools:
     toolsets: [context, repos, pull_requests]
   web-fetch:
 safe-outputs:
-  add-comment:
+  create-pull-request-review-comment:
+    max: 10
+    side: "RIGHT"
+    target: "*"
+    allowed-repos: ["drasi-project/*"]
+    github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
+  submit-pull-request-review:
     max: 1
     target: "*"
-    allowed-repos: ["drasi-project/*", "ruokun-niu/*"]
+    allowed-repos: ["drasi-project/*"]
+    allowed-events: [COMMENT]
+    footer: "if-body"
     github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
-    hide-older-comments: true
-    issues: false
-    discussions: false
 ---
 
 # pr-correctness-reviewer
@@ -125,18 +130,51 @@ Do not comment on:
 ## Output rules
 
 - Be concise and direct. No preambles, no praise, no filler.
-- Only report findings. If the code is correct, say so in one sentence.
+- Only report findings. If the code is correct, do not invent issues.
 - Tag each finding: 🔴 Blocker — bug or correctness issue that must be fixed. 🟡 Should-Fix — non-idiomatic code or latent risk. 🔵 Nit — minor style or idiom improvement.
-- Include file path and line/function reference for each finding.
 - Provide a concrete code fix for each finding — show the before/after or suggested replacement.
 
 ## Output
 
-Post EXACTLY ONE comment to the PR. The comment must start with:
+Parse the PR URL ("${{ inputs.pr_url }}") to extract `owner/repo` and the PR number, and use them in every tool call below.
 
-## ✅ Correctness Review
+Submit your review as a GitHub PR review with inline comments on specific lines (similar to a human code review). Do this in two steps:
 
-Then list your findings. If no findings, state: "No correctness issues identified."
+### Step 1 — Inline comments on specific lines
+
+For every finding that points at a specific line (or contiguous range) in the diff, call `create_pull_request_review_comment` with:
+- `repo`: `"<owner>/<repo>"` parsed from the PR URL
+- `pull_request_number`: PR number parsed from the PR URL
+- `path`: file path relative to repo root
+- `line`: the line number on the **right side** of the diff (the new code). For multi-line ranges, also set `start_line`.
+- `side`: `"RIGHT"` (omit `start_side` unless commenting on the original side)
+- `body`: a markdown-formatted comment with the severity tag (🔴/🟡/🔵), a one-line description, and a fenced code block showing the suggested fix. Use GitHub's [`suggestion` block](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request) format where appropriate so the author can apply it with one click:
+  ```suggestion
+  fixed_code_here
+  ```
+
+You may post up to 10 inline comments per review. Prioritize Blockers, then Should-Fix, then Nits.
+
+### Step 2 — Submit the review with a top-level summary
+
+After posting all inline comments, call `submit_pull_request_review` exactly once with:
+- `repo`: `"<owner>/<repo>"`
+- `pull_request_number`: PR number
+- `event`: `"COMMENT"`
+- `body`: a top-level summary that MUST start with:
+
+  ```
+  ## ✅ Correctness Review
+  ```
+
+  Followed by:
+  - A one-paragraph summary of overall correctness.
+  - A bulleted list of findings that are NOT tied to a specific line (cross-cutting issues, missing logic, etc.), each tagged with 🔴/🟡/🔵.
+  - If there are no findings at all (no inline comments and nothing cross-cutting), the body should simply state: "No correctness issues identified."
+
+The inline comments from Step 1 are automatically bundled into this submitted review, creating resolvable threads on each line — exactly like a human or Copilot PR review.
+
+If no findings exist anywhere, you must still call `submit_pull_request_review` once with the "No correctness issues identified." body so the workflow has output.
 
 References:
 - Drasi GitHub Organization: https://github.com/drasi-project

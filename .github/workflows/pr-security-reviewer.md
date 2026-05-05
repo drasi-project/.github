@@ -29,7 +29,7 @@ safe-outputs:
   add-comment:
     max: 1
     target: "*"
-    allowed-repos: ["drasi-project/*", "ruokun-niu/*"]
+    allowed-repos: ["drasi-project/*"]
     github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
     hide-older-comments: true
     issues: false
