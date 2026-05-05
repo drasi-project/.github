@@ -18,6 +18,7 @@ permissions:
 network:
   allowed:
     - defaults
+    - github
     - "drasi.io"
 tools:
   github:
