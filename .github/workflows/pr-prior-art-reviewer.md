@@ -15,6 +15,10 @@ on:
 permissions:
   contents: read
   pull-requests: read
+network:
+  allowed:
+    - defaults
+    - "drasi.io"
 tools:
   github:
     toolsets: [context, repos, pull_requests, search]
