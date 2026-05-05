@@ -31,17 +31,17 @@ safe-outputs:
     target: "*"
     target-repo: "drasi-project/drasi-core"
     github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
-  submit-pull-request-review:
-    max: 1
-    target: "*"
-    allowed-repos:
-      - drasi-project/drasi-core
-      - drasi-project/drasi-server
-      - drasi-project/drasi-platform
-      - drasi-project/docs
-    allowed-events: [COMMENT]
-    footer: "if-body"
-    github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
+  # submit-pull-request-review:
+  #   max: 1
+  #   target: "*"
+  #   allowed-repos:
+  #     - drasi-project/drasi-core
+  #     - drasi-project/drasi-server
+  #     - drasi-project/drasi-platform
+  #     - drasi-project/docs
+  #   allowed-events: [COMMENT]
+  #   footer: "if-body"
+  #   github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
 ---
 
 # pr-correctness-reviewer
