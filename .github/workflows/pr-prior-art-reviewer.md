@@ -26,11 +26,18 @@ tools:
   web-fetch:
   web-search:
 safe-outputs:
+  github-app:
+    app-id: ${{ vars.DRASI_REVIEWER_APP_ID }}
+    private-key: ${{ secrets.DRASI_REVIEWER_APP_PRIVATE_KEY }}
+    repositories: ["*"]
   add-comment:
     max: 1
     target: "*"
-    allowed-repos: ["drasi-project/*"]
-    github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
+    allowed-repos:
+      - "drasi-project/drasi-core"
+      - "drasi-project/drasi-server"
+      - "drasi-project/drasi-platform"
+      - "drasi-project/docs"
     hide-older-comments: true
     issues: false
     discussions: false
