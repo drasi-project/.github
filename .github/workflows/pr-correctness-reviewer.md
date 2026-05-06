@@ -28,6 +28,7 @@ safe-outputs:
   github-app:
     app-id: ${{ vars.DRASI_REVIEWER_APP_ID }}
     private-key: ${{ secrets.DRASI_REVIEWER_APP_PRIVATE_KEY }}
+    repositories: ["*"]
   create-pull-request-review-comment:
     max: 10
     side: "RIGHT"
