@@ -25,7 +25,9 @@ tools:
     toolsets: [context, repos, pull_requests]
   web-fetch:
 safe-outputs:
-  github-token: ${{ secrets.ISSUE_UPDATE_TOKEN }}
+  github-app:
+    app-id: ${{ vars.DRASI_REVIEWER_APP_ID }}
+    private-key: ${{ secrets.DRASI_REVIEWER_APP_PRIVATE_KEY }}
   create-pull-request-review-comment:
     max: 10
     side: "RIGHT"
