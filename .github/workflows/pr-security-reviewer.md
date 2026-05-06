@@ -130,13 +130,15 @@ Parse the PR URL ("${{ inputs.pr_url }}") to extract `owner/repo` and the PR num
 
 Submit your review as a GitHub PR review with inline comments on specific lines. Do this in two steps:
 
-### Step 1 — Inline comments on specific lines
+### Step 1 — Inline comments on specific lines (REQUIRED when possible)
 
-For every finding that points at a specific line (or contiguous range) in the diff, call `create_pull_request_review_comment` with:
+**You MUST anchor every finding to a specific changed line in the diff whenever possible.** Only put a finding in the summary (Step 2) if it genuinely cannot be tied to any line in the diff (e.g. a missing security control across the whole module). For each finding, pick the most representative changed line — the unsafe call, the input read, the auth check site, the dependency bump.
+
+For every finding, call `create_pull_request_review_comment` with:
 - `repo`: `"<owner>/<repo>"` parsed from the PR URL
 - `pull_request_number`: PR number parsed from the PR URL
 - `path`: file path relative to repo root
-- `line`: the line number on the **right side** of the diff (the new code). For multi-line ranges, also set `start_line`.
+- `line`: the line number on the **right side** of the diff (the new code). The line MUST be a line that appears in the PR diff (added or part of the diff hunk context) — lines outside the diff will be rejected. For multi-line ranges, also set `start_line`.
 - `side`: `"RIGHT"`
 - `body`: a markdown-formatted comment with the severity tag (🔴/🟡/🔵), a one-line description of the attack scenario, and a concrete fix. Use GitHub's `suggestion` block format where appropriate:
   ```suggestion
@@ -159,8 +161,8 @@ After posting all inline comments, call `submit_pull_request_review` exactly onc
 
   Followed by:
   - A one-paragraph summary of overall security posture.
-  - A bulleted list of findings that are NOT tied to a specific line (cross-cutting issues, supply-chain risks, etc.), each tagged with 🔴/🟡/🔵.
-  - If there are no findings at all (no inline comments and nothing cross-cutting), the body should simply state: "No security concerns identified."
+  - A bulleted list of ONLY findings that genuinely cannot be anchored to any line in the diff (e.g. missing controls across the whole module, supply-chain risks). Each tagged with 🔴/🟡/🔵. Do NOT repeat findings already posted as inline comments.
+  - If there are no findings at all, the body should simply state: "No security concerns identified."
 
 If no findings exist anywhere, you must still call `submit_pull_request_review` once with the "No security concerns identified." body so the workflow has output.
 

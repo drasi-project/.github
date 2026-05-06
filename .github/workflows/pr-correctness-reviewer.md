@@ -163,7 +163,7 @@ For every finding that points at a specific line (or contiguous range) in the di
   fixed_code_here
   ```
 
-You may post up to 10 inline comments per review. Prioritize Blockers, then Should-Fix, then Nits.
+You may post up to 20 inline comments per review. Prioritize Blockers, then Should-Fix, then Nits.
 
 ### Step 2 — Submit the review with a top-level summary
 
