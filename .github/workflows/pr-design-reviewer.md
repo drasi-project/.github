@@ -29,7 +29,16 @@ safe-outputs:
     app-id: ${{ vars.DRASI_REVIEWER_APP_ID }}
     private-key: ${{ secrets.DRASI_REVIEWER_APP_PRIVATE_KEY }}
     repositories: ["*"]
-  add-comment:
+  create-pull-request-review-comment:
+    max: 20
+    side: "RIGHT"
+    target: "*"
+    allowed-repos:
+      - "drasi-project/drasi-core"
+      - "drasi-project/drasi-server"
+      - "drasi-project/drasi-platform"
+      - "drasi-project/docs"
+  submit-pull-request-review:
     max: 1
     target: "*"
     allowed-repos:
@@ -37,9 +46,8 @@ safe-outputs:
       - "drasi-project/drasi-server"
       - "drasi-project/drasi-platform"
       - "drasi-project/docs"
-    hide-older-comments: true
-    issues: false
-    discussions: false
+    allowed-events: [COMMENT]
+    footer: "if-body"
 ---
 
 # pr-design-reviewer
@@ -94,11 +102,40 @@ Do not comment on:
 
 ## Output
 
-Post EXACTLY ONE comment to the PR. The comment must start with:
+Parse the PR URL ("${{ inputs.pr_url }}") to extract `owner/repo` and the PR number, and use them in every tool call below.
 
-## 🏗️ Design Review
+Submit your review as a GitHub PR review with inline comments on specific lines. Do this in two steps:
 
-Then list your findings. If no findings, state: "No design concerns identified."
+### Step 1 — Inline comments on specific lines
+
+For every finding that points at a specific line (or contiguous range) in the diff, call `create_pull_request_review_comment` with:
+- `repo`: `"<owner>/<repo>"` parsed from the PR URL
+- `pull_request_number`: PR number parsed from the PR URL
+- `path`: file path relative to repo root
+- `line`: the line number on the **right side** of the diff (the new code). For multi-line ranges, also set `start_line`.
+- `side`: `"RIGHT"`
+- `body`: a markdown-formatted comment with the severity tag (🔴/🟡/🔵), a one-line description, and a concrete suggestion for a better design.
+
+You may post up to 10 inline comments per review. Prioritize Blockers, then Should-Fix, then Nits. Note that many design concerns are cross-cutting and belong in the summary rather than as inline comments.
+
+### Step 2 — Submit the review with a top-level summary
+
+After posting all inline comments, call `submit_pull_request_review` exactly once with:
+- `repo`: `"<owner>/<repo>"`
+- `pull_request_number`: PR number
+- `event`: `"COMMENT"`
+- `body`: a top-level summary that MUST start with:
+
+  ```
+  ## 🏗️ Design Review
+  ```
+
+  Followed by:
+  - A one-paragraph summary of the overall design.
+  - A bulleted list of findings that are NOT tied to a specific line (architectural concerns, cross-cutting design issues, etc.), each tagged with 🔴/🟡/🔵.
+  - If there are no findings at all (no inline comments and nothing cross-cutting), the body should simply state: "No design concerns identified."
+
+If no findings exist anywhere, you must still call `submit_pull_request_review` once with the "No design concerns identified." body so the workflow has output.
 
 References:
 - Drasi GitHub Organization: https://github.com/drasi-project
