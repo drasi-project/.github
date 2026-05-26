@@ -88,10 +88,10 @@ jobs:
         if: inputs.install-jq
         run: echo "JQ_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
 
-      - name: Install Rust 1.88.0
+      - name: Install Rust 1.95.0
         run: |
-          rustup toolchain install 1.88.0 --profile minimal --component clippy
-          rustup default 1.88.0
+          rustup toolchain install 1.95.0 --profile minimal --component clippy
+          rustup default 1.95.0
 
       - name: Cache Cargo registry
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
@@ -150,10 +150,10 @@ jobs:
             sudo apt-get update && sudo apt-get install -y $packages
           fi
 
-      - name: Install Rust 1.88.0
+      - name: Install Rust 1.95.0
         run: |
-          rustup toolchain install 1.88.0 --profile minimal --component rustfmt
-          rustup default 1.88.0
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup default 1.95.0
 
       - name: Run Format Check
         run: ${{ inputs.fmt-command }}
