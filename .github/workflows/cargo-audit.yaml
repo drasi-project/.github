@@ -45,10 +45,10 @@ jobs:
         with:
           submodules: ${{ inputs.submodules }}
 
-      - name: Install Rust 1.88.0
+      - name: Install Rust 1.95.0
         run: |
-          rustup toolchain install 1.88.0 --profile minimal
-          rustup default 1.88.0
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup default 1.95.0
 
       - name: Install cargo-audit
         run: cargo install cargo-audit --locked
@@ -69,10 +69,10 @@ jobs:
         with:
           submodules: ${{ inputs.submodules }}
 
-      - name: Install Rust 1.88.0
+      - name: Install Rust 1.95.0
         run: |
-          rustup toolchain install 1.88.0 --profile minimal
-          rustup default 1.88.0
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup default 1.95.0
 
       - name: Run cargo deny
         uses: EmbarkStudios/cargo-deny-action@34899fc7ba81ca6268d5947a7a16b4649013fea1 # v2.0.11
