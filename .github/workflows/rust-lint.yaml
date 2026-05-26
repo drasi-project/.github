@@ -18,6 +18,11 @@ on:
         required: false
         type: string
         default: "cargo clippy --all-targets"
+      rustflags:
+        description: "RUSTFLAGS to set for clippy (e.g. '-Dwarnings -W clippy::print_stdout')"
+        required: false
+        type: string
+        default: "-Dwarnings -W clippy::print_stdout -W clippy::unwrap_used -A unused -A clippy::module_inception -A clippy::ptr_arg -A clippy::type_complexity"
       fmt-command:
         description: "Command to run format check (e.g. 'cargo fmt -- --check' or 'make fmt-check')"
         required: false
@@ -114,6 +119,8 @@ jobs:
 
       - name: Run Clippy
         run: ${{ inputs.clippy-command }}
+        env:
+          RUSTFLAGS: ${{ inputs.rustflags }}
 
   fmt:
     name: Cargo Fmt
