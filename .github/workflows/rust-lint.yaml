@@ -17,7 +17,7 @@ on:
         description: "Command to run clippy (e.g. 'cargo clippy --all-targets' or 'make clippy')"
         required: false
         type: string
-        default: "cargo clippy --all-targets"
+        default: "cargo clippy --all-targets --all-features"
       rustflags:
         description: "RUSTFLAGS to set for clippy (e.g. '-Dwarnings')"
         required: false
