@@ -101,13 +101,54 @@ Source of truth for all org-level defaults.
 
 ### `drasi-server`
 
-- **Workflows:** `rust-unit-test`, `rust-lint`, `cargo-audit`, `devskim`, `pr-assignment-check`, `pr-first-approval-label` (+ `-run`), agentic-workflow caller(s)
-- **Labels:** _TBD_
-- **Templates:** inherited
-- **CODEOWNERS:** `@drasi-project/maintainers-server` _(confirm)_
-- **Agents:** inherited
-- **Permissions:** _TBD_
-- **Repo-specific:** build/release workflows unique to server
+- **Workflows:**
+    - Security workflows
+        - [`scorecard.yaml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/scorecard.yaml) — OSSF Scorecard, repo-local (not inherited). Triggers: push to `main`, weekly cron (Mon 15:15 UTC), `workflow_dispatch`. Results: [Security → Code scanning](https://github.com/drasi-project/drasi-server/security/code-scanning) + `scorecard-sarif` artifact.
+        - [`devskim.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/devskim.yml) — inherits `devskim.yaml` from `.github`. Triggers: weekly cron (Sun 00:30 UTC), `workflow_dispatch`. Results: [Security → Code scanning](https://github.com/drasi-project/drasi-server/security/code-scanning).
+        - [`cargo-audit.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/cargo-audit.yml) — inherits `cargo-audit.yaml` from `.github`. Triggers: PRs to `main`, weekly cron (Mon 01:30 UTC). Results: workflow run logs in [Actions](https://github.com/drasi-project/drasi-server/actions/workflows/cargo-audit.yml).
+    - PR management workflows
+        - [`pr-assignment-check.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/pr-assignment-check.yml) — repo-local (not inherited). Trigger: `pull_request_target` (opened/reopened/edited). Enforces linked-issue + author assignment on non-maintainer PRs; applies `needs-issue` / `needs-assignment` labels.
+        - [`pr-first-approval-label.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/pr-first-approval-label.yml) + [`pr-first-approval-label-run.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/pr-first-approval-label-run.yml) — repo-local two-stage workflow. Stage 1 on `pull_request_review`, Stage 2 on `workflow_run` (write token); manages `need-2nd-review` label.
+    - Agentic Workflows
+        - PR reviewers (`pr-all-reviewers.yml` + 6 per-aspect reviewer pairs)
+        - Issue researcher (`trigger-issue-research.yml`)
+        - YAML snippet validator (`validate-yaml-snippets.md/.lock.yml`)
+    - Rust Workflows
+        - [`test.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/test.yml) — inherits `rust-unit-test.yaml` from `.github`. Trigger: PRs to `main`.
+        - [`lint.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/lint.yml) — inherits `rust-lint.yaml` from `.github`; uses `make clippy` / `make fmt-check`. Trigger: PRs to `main`.
+    - Repo specific workflows
+        - [`release.yaml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/release.yaml) — repo-local. Triggers: `workflow_dispatch` (inputs: `tag`, `image_prefix`, `dry_run`), weekly cron (Mon 08:00 UTC, dry-run). Cross-platform matrix build of `drasi-server` + `drasi-sse-cli` binaries (Linux glibc/musl × x86_64/arm64, macOS, Windows MSVC), multi-arch Docker images to GHCR, and a versioned GitHub Release with artifacts.
+        - [`docker-build-check.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/docker-build-check.yml) — repo-local. Trigger: PRs to `main`. Builds the Docker image for `linux/amd64` and `linux/arm64` (no push) as a PR sanity check.
+        - [`integration-test-getting-started.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/integration-test-getting-started.yml) — repo-local. Triggers: PRs + pushes to `main`/`feature-lib`. Runs the getting-started integration test against a PostgreSQL service.
+        - [`copilot-setup-steps.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/copilot-setup-steps.yml) — repo-local. Defines environment setup steps for the GitHub Copilot coding agent (not a normal CI workflow).
+- **Labels:** [19 labels](https://github.com/drasi-project/drasi-server/labels)
+    - Reviewer labels: `review:all`, `review:correctness`, `review:design`, `review:docs`, `review:prior-art`, `review:security`, `review:testing`
+    - PR workflow: `need-2nd-review`
+    - Issue triage: `bug`, `enhancement`, `documentation`, `question`, `duplicate`, `invalid`, `wontfix`, `good first issue`, `help wanted`
+    - Agentic / program: `agentic-workflows`, `needs-research`
+- **Documents & templates:**
+    - Inherited from `.github` (community health files):
+        - `CODE_OF_CONDUCT.md`
+        - `CONTRIBUTING.md`
+        - `SECURITY.md`
+        - `SUPPORT.md`
+        - `AI_POLICY.md`
+        - `MENTORSHIP.md`
+        - `pull_request_template.md`
+        - Issue forms in `ISSUE_TEMPLATE/`: `bug.yaml`, `feature.yaml`, `engineering.yaml`, `config.yaml`
+    - In-repo (override or repo-specific):
+        - `README.md`
+        - `LICENSE` (Apache-2.0)
+        - `.github/CODEOWNERS`
+- **CODEOWNERS:** `@drasi-project/maintainers-server` ([`.github/CODEOWNERS`](https://github.com/drasi-project/drasi-server/blob/main/.github/CODEOWNERS))
+- **Ruleset:** [Settings → Rules](https://github.com/drasi-project/drasi-server/settings/rules) — active, targets `main`, no bypass
+    - Require PR before merging: 2 approvals, dismiss stale approvals on new commits, require review from `@drasi-project/maintainers-server`, require Code Owner review, require approval of most recent push
+    - Require status checks to pass: `test / Rust Unit Tests` ([`test.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/test.yml))
+    - Block force pushes
+
+#### TODO
+
+- Remove `.github/workflows/copilot-setup-steps.yml` (not needed for this repo).
 
 ### `drasi-platform`
 
