@@ -152,30 +152,85 @@ Source of truth for all org-level defaults.
 
 ### `drasi-platform`
 
-- **Workflows:** _TBD_
-- **Labels:** _TBD_
-- **Templates:** inherited
-- **CODEOWNERS:** _TBD_
-- **Agents:** inherited
-- **Permissions:** _TBD_
-- **Repo-specific:** _TBD_
+- **Workflows:**
+    - Security workflows
+        - [`scorecard.yaml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/scorecard.yaml) — OSSF Scorecard, repo-local (not inherited). Triggers: push to `main`, weekly cron (Mon 15:15 UTC), `workflow_dispatch`. Results: [Security → Code scanning](https://github.com/drasi-project/drasi-platform/security/code-scanning) + `scorecard-sarif` artifact.
+        - [`devskim.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/devskim.yml) — inherits `devskim.yaml` from `.github`. Triggers: weekly cron (Sun 00:30 UTC), `workflow_dispatch`. Results: [Security → Code scanning](https://github.com/drasi-project/drasi-platform/security/code-scanning).
+    - PR management workflows
+        - [`pr-assignment-check.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/pr-assignment-check.yml) — repo-local (not inherited). Trigger: `pull_request_target` (opened/reopened/edited). Enforces linked-issue + author assignment on non-maintainer PRs; applies `needs-issue` and may close unassigned PRs.
+        - [`pr-first-approval-label.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/pr-first-approval-label.yml) + [`pr-first-approval-label-run.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/pr-first-approval-label-run.yml) — repo-local two-stage workflow. Stage 1 on `pull_request_review`, Stage 2 on `workflow_run` (write token); manages `need-2nd-review` label.
+    - Agentic workflows
+        - PR reviewers orchestrator: [`pr-all-reviewers.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/pr-all-reviewers.yml) (trigger: `review:all` label or `workflow_dispatch`)
+        - Per-aspect reviewers: `pr-correctness/design/docs/prior-art/security/testing-reviewer` (`.md` + `.lock.yml` pairs)
+        - Issue researcher: [`drasi-issue-researcher.md`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/drasi-issue-researcher.md) + `.lock.yml` (trigger: `needs-research` label on issues)
+    - Build/lint/test workflows
+        - [`build-test.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/build-test.yml) — repo-local (not inherited). Trigger: PRs to `main`/`feature/*`/`release/*`; builds components/CLI and runs the e2e test.
+        - [`lint.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/lint.yml) — inherits `rust-lint.yaml` from `.github`. Trigger: PRs to `main`.
+            - Rust quality checks via `make lint-check` (clippy + fmt across Rust projects)
+            - Repository-wide typo checks
+    - Release/publishing workflows
+        - [`draft-release.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/draft-release.yml) — repo-local. Trigger: `workflow_dispatch` (inputs: `tag`, `image_prefix`). Builds/publishes images, runs validation, drafts release assets.
+        - [`image-validation.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/image-validation.yml) — repo-local reusable workflow (`workflow_call` + `workflow_dispatch`) for multi-arch image validation and pull tests.
+        - [`vsce.yaml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/vsce.yaml) — repo-local. Trigger: `workflow_dispatch` (input: `version`). Publishes VS Code extension package using `VSCE_TOKEN`.
+- **Labels:** [27 labels](https://github.com/drasi-project/drasi-platform/labels)
+    - Reviewer/PR flow: `need-2nd-review`, `needs-2nd-review`, `needs-issue`, `do not merge`, `automerge-patch-candidate`, `automerge-minor-candidate`
+    - Issue triage: `bug`, `enhancement`, `documentation`, `question`, `duplicate`, `invalid`, `wontfix`, `good first issue`, `help wanted`, `triaged`, `mentorship`
+    - Automation/dependency/language: `automated`, `automation`, `dependencies`, `github_actions`, `go`, `java`, `javascript`, `python`, `rust`
+    - Agentic/program: `needs-research`
+- **Documents & templates:**
+    - In-repo community health files (not inherited): `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`, `.github/pull_request_template.md`, issue templates
+    - In-repo additional docs: `README.md`, `LICENSE` (Apache-2.0)
+- **CODEOWNERS:** `@drasi-project/maintainers-platform` ([`.github/CODEOWNERS`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/CODEOWNERS))
+- **Agents:** `.github/agents/issue-investigator.agent.md`
+- **Ruleset:** [Settings → Rules](https://github.com/drasi-project/drasi-platform/settings/rules) — active, targets `main`, no bypass
+    - Require PR before merging: 2 approvals, dismiss stale approvals on new commits, require review from `@drasi-project/maintainers-platform`, require Code Owner review, require approval of most recent push
+    - Require status checks to pass: `e2e-tests` ([`build-test.yml`](https://github.com/drasi-project/drasi-platform/blob/drasi-platform-workflow-improvement/.github/workflows/build-test.yml))
+    - Block force pushes
 
-### `drasi-learning`
+#### TODO
 
-- **Workflows:** _TBD_
-- **Labels:** _TBD_
-- **Templates:** inherited
-- **CODEOWNERS:** _TBD_
-- **Agents:** inherited
-- **Permissions:** _TBD_
-- **Repo-specific:** _TBD_
+- Merge [drasi-project/drasi-platform#432](https://github.com/drasi-project/drasi-platform/pull/432) so the workflow/agent updates documented above are active on `main`.
 
-### `docs` (design-docs)
+### `learning`
 
-- **Workflows:** _TBD_ (docs build / link check?)
-- **Labels:** _TBD_
-- **Templates:** inherited
-- **CODEOWNERS:** _TBD_
-- **Agents:** inherited
-- **Permissions:** _TBD_
-- **Repo-specific:** _TBD_
+- **Current state:** no consistency migration has been applied yet; repo still uses learning-specific workflows and labeling.
+- **Workflows (current):**
+    - Tutorial lifecycle workflows: [`build-tutorial-images.yml`](https://github.com/drasi-project/learning/blob/main/.github/workflows/build-tutorial-images.yml), [`manual-build-images.yml`](https://github.com/drasi-project/learning/blob/main/.github/workflows/manual-build-images.yml), [`release.yml`](https://github.com/drasi-project/learning/blob/main/.github/workflows/release.yml)
+    - Tutorial quality/evaluation workflows: [`tutorial-evaluation.yml`](https://github.com/drasi-project/learning/blob/main/.github/workflows/tutorial-evaluation.yml), [`tutorial-evaluation-scheduled.yml`](https://github.com/drasi-project/learning/blob/main/.github/workflows/tutorial-evaluation-scheduled.yml)
+    - Automation workflow: [`automerge.yml`](https://github.com/drasi-project/learning/blob/main/.github/workflows/automerge.yml)
+    - Not currently using centralized reusable workflows (`rust-unit-test`, `rust-lint`, `cargo-audit`, `devskim`) from `.github`.
+- **Labels (current):** [16 labels](https://github.com/drasi-project/learning/labels), including `tutorial-failure`, `automated`, `automerge-*`, and standard issue labels.
+- **Documents & templates (current):**
+    - Inherited from `.github`: `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`, `pull_request_template.md`
+    - In-repo: `README.md`, `LICENSE`, `.github/CODEOWNERS`
+- **CODEOWNERS (current):** `@drasi-project/maintainers-learning` ([`.github/CODEOWNERS`](https://github.com/drasi-project/learning/blob/main/.github/CODEOWNERS))
+- **Agents (current):** no `.github/agents/` directory detected.
+- **Ruleset (current):** _TBD_ (capture from [Settings → Rules](https://github.com/drasi-project/learning/settings/rules)).
+
+#### Proposed next steps
+
+- Normalize labels toward org baseline while retaining `tutorial-failure` and other learning-specific labels.
+- Document current traditional branch protection settings for `main`, then migrate to a repository ruleset aligned with org standards.
+
+### `docs`
+
+- **Workflows (current):**
+    - [`website.yaml`](https://github.com/drasi-project/docs/blob/main/.github/workflows/website.yaml) — builds Hugo site on PRs/pushes and deploys GitHub Pages on `main` pushes.
+    - [`spellcheck.yaml`](https://github.com/drasi-project/docs/blob/main/.github/workflows/spellcheck.yaml) — spellcheck on pushes/PRs using `.github/config/.pyspelling.yml`.
+    - [`test.yaml`](https://github.com/drasi-project/docs/blob/main/.github/workflows/test.yaml) — manual docs validation flow tied to a `drasi-platform` release version input.
+    - Not using centralized reusable Rust/security workflows from `.github` (`rust-unit-test`, `rust-lint`, `cargo-audit`, `devskim`), which is expected for this repo type.
+- **Labels (current):** [9 labels](https://github.com/drasi-project/docs/labels), currently the core issue triage set (`bug`, `documentation`, `enhancement`, `question`, `duplicate`, `invalid`, `wontfix`, `good first issue`, `help wanted`).
+- **Documents & templates (current):**
+    - In-repo: `CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `readme.md`, `.github/CODEOWNERS`
+    - Inherited from `.github`: `SECURITY.md`, `pull_request_template.md`
+    - Local issue templates: none detected (`.github/ISSUE_TEMPLATE/` not present)
+- **CODEOWNERS (current):** `@drasi-project/maintainers-docs` ([`.github/CODEOWNERS`](https://github.com/drasi-project/docs/blob/main/.github/CODEOWNERS))
+- **Agents (current):** no `.github/agents/` directory detected.
+- **Permissions (current):** _TBD_ (capture write/admin teams from repo settings).
+- **Ruleset (current):** _TBD_ (capture from [Settings → Rules](https://github.com/drasi-project/docs/settings/rules)).
+- **Repo-specific:** Hugo/Docsy site pipeline and spellcheck dictionaries in `.github/config/` (`.pyspelling.yml`, `en-custom.txt`, `en-drasi.txt`).
+
+#### Proposed next steps
+
+- Document current traditional branch protection settings for `main`, then migrate to a repository ruleset aligned with org standards.
+- Research tools, mechanisms, and practices for upgrading Docsy versions.
