@@ -2,49 +2,22 @@
 
 Standard settings that apply to every repo in the [`drasi-project`](https://github.com/drasi-project) org, plus a per-repo snapshot of what is configured today.
 
-## Org-wide standards
+## Org-wide settings
 
 | Area | Standard | Managed in |
 |---|---|---|
 | Branch protection | Org-level rulesets (required reviews, required status checks, no force push) | [Org settings → Rulesets](https://github.com/organizations/drasi-project/settings/rules/14440581) |
-| CODEOWNERS | Required in every repo; not inherited | Each repo (`.github/CODEOWNERS`) |
-| CI / workflows | Reusable workflows + starter templates | [`drasi-project/.github`](https://github.com/drasi-project/.github) |
-| Labels | Standard label set applied across repos | Individual Repos |
-| Issue/PR templates | Inherited from `.github` | [`drasi-project/.github`](https://github.com/drasi-project/.github) |
-| Community docs | `CODE_OF_CONDUCT`, `CONTRIBUTING`, `SECURITY`, `SUPPORT`, `AI_POLICY`, `MENTORSHIP`, `LICENSE` inherited from `.github` | [`drasi-project/.github`](https://github.com/drasi-project/.github) |
-| Agentic workflows | Source `.md` in `.github` | Per-repo: `.github/workflows/` |
 | Secrets | Org-level: `COPILOT_GITHUB_TOKEN`, `ISSUE_UPDATE_TOKEN`, `DRASI_REVIEWER_APP_ID`, `DRASI_REVIEWER_APP_PRIVATE_KEY` | Org settings → Variables/Secrets |
 
 
 ---
 
-## Per-repo configuration
-
-For each repo we track:
-
-- **Workflows** — CI workflows the repo calls or hosts
-- **Labels** — repo-specific labels beyond the org default set
-- **Templates** — issue/PR templates in the repo (otherwise inherited)
-- **CODEOWNERS** — team(s) that own the repo
-- **Agents** — `.agent.md` files in the repo (otherwise inherited)
-- **Permissions** — write/admin teams beyond org defaults
-- **Repo-specific** — anything that legitimately diverges from the standard
-
-`inherited` = comes from `.github`, nothing in-repo required. `_TBD_` = not yet audited.
-
----
-
 ### `.github`
 
-Source of truth for all org-level defaults.
+Stores shared assets used by other repositories.
 
-- **Workflows:** hosts all reusable workflows (`rust-unit-test`, `rust-lint`, `cargo-audit`, `devskim`) and agentic workflow sources
-- **Labels:** _TBD_
-- **Templates:** owns the org-default issue forms (`bug`, `feature`, `engineering`, `config`) and `pull_request_template.md`
-- **CODEOWNERS:** _TBD_
-- **Agents:** `agentic-workflows.agent.md`
-- **Permissions:** _TBD_
-- **Repo-specific:** `profile/README.md` (org profile), `CHECKLIST.md`, `workflow-templates/`
+- **Workflows:** reusable workflow definitions/templates in `workflow-templates/`, plus agentic workflow sources in `agentic-workflows/`.
+- **Community docs:** org-default community and contribution files (`CODE_OF_CONDUCT.md`, `CONTRIBUTING.md`, `SECURITY.md`, `SUPPORT.md`, `AI_POLICY.md`, `MENTORSHIP.md`, `LICENSE`), issue forms in `ISSUE_TEMPLATE/`, and `pull_request_template.md`.
 
 ### `drasi-core`
 
