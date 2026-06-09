@@ -37,11 +37,10 @@ Stores shared assets used by other repositories.
         - [`ci-lint.yml`](https://github.com/drasi-project/drasi-core/blob/main/.github/workflows/ci-lint.yml) — inherits `rust-lint.yaml` from `.github`. Triggers: PRs to `main`/`feature/*`/`feature-lib`/`release/*`.
         - [`coverage.yaml`](https://github.com/drasi-project/drasi-core/blob/main/.github/workflows/coverage.yaml) — repo-local (not inherited); uploads to [Coveralls](https://coveralls.io/github/drasi-project/drasi-core). Triggers: push to `main`, PRs to `main`.
         - [`test-ffi.yml`](https://github.com/drasi-project/drasi-core/blob/main/.github/workflows/test-ffi.yml) — repo-local (not inherited); cross-platform FFI tests. Triggers: PRs to `main`/`feature/*`/`release/*`, and `workflow_dispatch`.
-    - Repo specific workflows
+    - Repo-specific workflows
         - [`release-plz.yml`](https://github.com/drasi-project/drasi-core/blob/main/.github/workflows/release-plz.yml) — repo-local. Triggers: push to `main`, `workflow_dispatch` (with `dry_run` / `force_publish` inputs). On regular commits opens/updates a release PR with version bumps + changelog; on a release-PR merge publishes crates to crates.io and creates git tags. Uses the `drasi-core-release` environment and `CARGO_REGISTRY_TOKEN`.
         - [`publish-crate.yml`](https://github.com/drasi-project/drasi-core/blob/main/.github/workflows/publish-crate.yml) — repo-local manual fallback. Trigger: `workflow_dispatch` (input: `package`). Runs `cargo publish -p <package>` for recovering from a failed `release-plz` run.
         - [`publish-plugins.yml`](https://github.com/drasi-project/drasi-core/blob/main/.github/workflows/publish-plugins.yml) — repo-local. Trigger: `workflow_dispatch` (inputs: `pre_release`, `registry`, `dry_run`). Cross-platform matrix build of plugin `cdylib`s and publish as OCI artifacts to GHCR (signed with cosign); follow-up job sets each package to public.
-    - Organization
 - **Labels:** [25 labels](https://github.com/drasi-project/drasi-core/labels)
     - Reviewer labels: `review:all`, `review:correctness`, `review:design`, `review:docs`, `review:prior-art`, `review:security`, `review:testing`
     - PR workflow: `need-2nd-review`, `need-changes`, `needs-issue`, `do not merge`, `stale`, `release`
@@ -89,7 +88,7 @@ Stores shared assets used by other repositories.
     - Rust Workflows
         - [`test.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/test.yml) — inherits `rust-unit-test.yaml` from `.github`. Trigger: PRs to `main`.
         - [`lint.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/lint.yml) — inherits `rust-lint.yaml` from `.github`; uses `make clippy` / `make fmt-check`. Trigger: PRs to `main`.
-    - Repo specific workflows
+    - Repo-specific workflows
         - [`release.yaml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/release.yaml) — repo-local. Triggers: `workflow_dispatch` (inputs: `tag`, `image_prefix`, `dry_run`), weekly cron (Mon 08:00 UTC, dry-run). Cross-platform matrix build of `drasi-server` + `drasi-sse-cli` binaries (Linux glibc/musl × x86_64/arm64, macOS, Windows MSVC), multi-arch Docker images to GHCR, and a versioned GitHub Release with artifacts.
         - [`docker-build-check.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/docker-build-check.yml) — repo-local. Trigger: PRs to `main`. Builds the Docker image for `linux/amd64` and `linux/arm64` (no push) as a PR sanity check.
         - [`integration-test-getting-started.yml`](https://github.com/drasi-project/drasi-server/blob/main/.github/workflows/integration-test-getting-started.yml) — repo-local. Triggers: PRs + pushes to `main`/`feature-lib`. Runs the getting-started integration test against a PostgreSQL service.
@@ -124,6 +123,8 @@ Stores shared assets used by other repositories.
 - Remove `.github/workflows/copilot-setup-steps.yml` (not needed for this repo).
 
 ### `drasi-platform`
+
+> Note: Links below reference the `drasi-platform-workflow-improvement` branch (PR #432), not the current `main` branch.
 
 - **Workflows:**
     - Security workflows
