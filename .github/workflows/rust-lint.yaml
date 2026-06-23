@@ -22,7 +22,7 @@ on:
         description: "Lint flags passed to clippy after '--' (only interpreted by clippy-driver, not all rustc invocations)"
         required: false
         type: string
-        default: "-D clippy::print_stdout -D clippy::unwrap_used -A unused -A clippy::module_inception -A clippy::ptr_arg -A clippy::type_complexity -D warnings"
+        default: "-Dwarnings"
       fmt-command:
         description: "Command to run format check (e.g. 'cargo fmt -- --check' or 'make fmt-check')"
         required: false
