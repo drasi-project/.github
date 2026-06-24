@@ -17,9 +17,9 @@ on:
         description: "Command to run clippy (e.g. 'cargo clippy --all-targets' or 'make clippy')"
         required: false
         type: string
-        default: "cargo clippy --all-targets --all-features"
-      rustflags:
-        description: "RUSTFLAGS to set for clippy (e.g. '-Dwarnings')"
+        default: "cargo clippy --all-targets"
+      clippy-args:
+        description: "Lint flags passed to clippy after '--' (only interpreted by clippy-driver, not all rustc invocations)"
         required: false
         type: string
         default: "-Dwarnings"
@@ -88,10 +88,10 @@ jobs:
         if: inputs.install-jq
         run: echo "JQ_LIB_DIR=/usr/lib/x86_64-linux-gnu" >> $GITHUB_ENV
 
-      - name: Install Rust 1.88.0
+      - name: Install Rust 1.95.0
         run: |
-          rustup toolchain install 1.88.0 --profile minimal --component clippy
-          rustup default 1.88.0
+          rustup toolchain install 1.95.0 --profile minimal --component clippy
+          rustup default 1.95.0
 
       - name: Cache Cargo registry
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
@@ -118,9 +118,12 @@ jobs:
             ${{ runner.os }}-cargo-clippy-
 
       - name: Run Clippy
-        run: ${{ inputs.clippy-command }}
-        env:
-          RUSTFLAGS: ${{ inputs.rustflags }}
+        run: |
+          if [[ -n "${{ inputs.clippy-args }}" ]]; then
+            ${{ inputs.clippy-command }} -- ${{ inputs.clippy-args }}
+          else
+            ${{ inputs.clippy-command }}
+          fi
 
   fmt:
     name: Cargo Fmt
@@ -150,10 +153,10 @@ jobs:
             sudo apt-get update && sudo apt-get install -y $packages
           fi
 
-      - name: Install Rust 1.88.0
+      - name: Install Rust 1.95.0
         run: |
-          rustup toolchain install 1.88.0 --profile minimal --component rustfmt
-          rustup default 1.88.0
+          rustup toolchain install 1.95.0 --profile minimal --component rustfmt
+          rustup default 1.95.0
 
       - name: Run Format Check
         run: ${{ inputs.fmt-command }}

@@ -99,10 +99,10 @@ jobs:
           docker system prune -af || true
           df -h
 
-      - name: Install Rust 1.88.0
+      - name: Install Rust 1.95.0
         run: |
-          rustup toolchain install 1.88.0 --profile minimal
-          rustup default 1.88.0
+          rustup toolchain install 1.95.0 --profile minimal
+          rustup default 1.95.0
 
       - name: Cache Cargo registry
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
