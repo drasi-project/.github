@@ -221,6 +221,38 @@ Stores shared assets used by other repositories.
     - Require PR before merging: 2 approvals, require Code Owner review, require approval of most recent push
     - Block force pushes
 
+### `test-infra`
+
+- **Workflows:**
+    - Build/lint/test workflows
+        - [`build.yml`](https://github.com/drasi-project/test-infra/blob/main/.github/workflows/build.yml) — repo-local. Triggers: pushes to `main`/`release/*`/tags `v*`; PRs to `main`/`feature/*`/`feature-lib`/`release/*`; `workflow_dispatch`. Builds the E2E test framework components (proxy/reactivator/test-service).
+        - [`lint.yml`](https://github.com/drasi-project/test-infra/blob/main/.github/workflows/lint.yml) — repo-local. Triggers: pushes (`*`) and PRs to `main`/`feature-lib`. Runs Rust lint checks via `make lint-check` in `e2e-test-framework`.
+    - Repo-specific workflows
+        - [`draft-release.yml`](https://github.com/drasi-project/test-infra/blob/main/.github/workflows/draft-release.yml) — repo-local. Trigger: `workflow_dispatch` (inputs: `tag`, `image_prefix`). Builds and publishes multi-arch test-infra component images to GHCR and creates manifest lists.
+- **Labels:** [9 labels](https://github.com/drasi-project/test-infra/labels)
+    - Issue triage: `bug`, `documentation`, `duplicate`, `enhancement`, `good first issue`, `help wanted`, `invalid`, `question`, `wontfix`
+- **Documents & templates:**
+    - Inherited from `.github` (community health files):
+        - `CODE_OF_CONDUCT.md`
+        - `CONTRIBUTING.md`
+        - `SECURITY.md`
+        - `pull_request_template.md`
+    - In-repo (override or repo-specific):
+        - `README.md`
+        - `LICENSE`
+        - `.github/CODEOWNERS`
+- **CODEOWNERS:** `@drasi-project/drasi-engineering-team` ([`.github/CODEOWNERS`](https://github.com/drasi-project/test-infra/blob/main/.github/CODEOWNERS))
+- **Agents:** no `.github/agents/` directory detected.
+- **Ruleset:** [Settings → Rules](https://github.com/drasi-project/test-infra/settings/rules) — active, targets default branch, no bypass
+    - Require PR before merging: 1 approval, dismiss stale approvals on new commits, require Code Owner review, require approval of most recent push
+    - Block force pushes
+
+#### TODO
+
+- Add security workflows (`scorecard`, `devskim`) aligned with org standards.
+- Expand labels toward org baseline.
+- Capture and document active branch ruleset details for `main`.
+
 ---
 
 ### `docs`
