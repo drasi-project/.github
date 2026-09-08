@@ -50,11 +50,15 @@ Review the PR specified by "${{ inputs.pr_url }}" via workflow_dispatch or workf
 
 ## Publication policy
 
-Publish only material, high-confidence findings within this reviewer's focus. For each candidate:
+Publish only material, high-confidence findings within this reviewer's focus.
 
-- Identify what this PR introduces or materially worsens, the supported scenario that reaches it, and the observable consequence. Pre-existing issues are out of scope unless the change makes them newly reachable or worse.
+High confidence can come from source and contract analysis that establishes a failure path, interleaving, or concrete cost. An executed reproduction or production incident is not required. Rare but high-impact failures still qualify when their preconditions are supported by evidence.
+
+For each candidate:
+
+- Identify what this PR introduces or materially worsens and its concrete consequence. This can be a reachable failure, a compatibility hazard, a deficiency in a new public contract, an important gap in coverage of a changed contract, or a substantial maintenance burden. Name the affected behavior or contract and explain the failure exposure or maintenance cost. Pre-existing issues remain out of scope unless the change makes them newly reachable or worse.
 - Try to disprove the finding using validation, types, caller guarantees, dependency behavior, existing coverage, and the author's constraints. Assumptions about hypothetical consumers or future changes are not evidence.
-- Preserve intentional tradeoffs unless evidence shows they violate the current requirements. Prefer the smallest sufficient correction over a new abstraction, public API, dependency, or project-wide refactor.
+- Preserve intentional tradeoffs unless evidence shows a violated requirement or substantial compatibility or maintenance cost introduced by the PR. Prefer the smallest sufficient correction over a new abstraction, public API, dependency, or project-wide refactor.
 - Deduplicate by underlying problem across agents, bots, reruns, and stacked PRs. Do not repeat a declined finding without new evidence. An accepted edit or resolved thread does not prove the original diagnosis or fix was correct.
 - Do not publish nits, style or naming preferences, wording polish, speculative future-proofing, optional hardening, praise, or observations requiring no action. Do not move them into the summary or relabel them Should-Fix.
 
@@ -102,7 +106,7 @@ Do not comment on:
 ## Output rules
 
 - Be concise and direct. No preambles, no praise, no filler.
-- Tag each finding: 🔴 Blocker for a demonstrated defect that prevents safe or correct supported use and must be fixed before merge. Use 🟡 Should-Fix for a concrete material defect or risk with bounded impact. Missing tests, missing comments, duplication, and custom code are not automatically blockers.
+- Tag each finding: 🔴 Blocker for a demonstrated defect that prevents safe or correct supported use and must be fixed before merge. Use 🟡 Should-Fix for a concrete material issue or risk, including important changed-contract coverage gaps and substantial maintenance burden. Missing tests, missing comments, duplication, and custom code are not automatically blockers.
 - Include the file and line/function, triggering scenario, consequence, supporting evidence, and smallest sufficient correction. Keep one underlying problem per finding.
 - Include suggested code only when the APIs, syntax, compatibility, and behavioral effect are established. Otherwise describe the required correction without a speculative patch.
 - After the review heading, identify the reviewed head SHA. For a complete review, list only new material findings. If all concerns already have threads, link those threads once without restating them.
