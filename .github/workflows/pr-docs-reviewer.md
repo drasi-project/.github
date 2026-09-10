@@ -70,6 +70,7 @@ Review documentation defects that would cause a user or maintainer to build, con
 
 ### Consequential accuracy and omissions
 
+- Review comments that generate published documentation, including Rust `///` and `//!` comments and equivalent API doc comments in other languages. Report incorrect or stale content and omitted public contracts when they could cause misuse.
 - Compare public API contracts, configuration fields, defaults, setup commands, and examples with the actual implementation and supported versions.
 - Verify toolchain claims against `rust-toolchain.toml`, crate-specific MSRV settings, manifests, and CI. A Rust edition is not a toolchain version. Never substitute a remembered version for repository evidence.
 - Identify contradictions about behavior, including bootstrap availability, persistence, retry policy, and when checkpoints advance.
